@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iotat.weather.mapper.WeatherMapper">
+
+    <resultMap id="hourMap" type="HourWeather">
+        <result column="id" property="id"/>
+        <result column="degree" property="degree"/>
+        <result column="weather" property="weather"/>
+        <result column="weather_code" property="weatherCode"/>
+        <result column="wind_direction" property="windDirection"/>
+        <result column="wind_power" property="windPower"/>
+        <result column="time" property="time"/>
+        <result column="time_id" property="timeId"/>
+        <result column="location_id" property="locationId"/>
+    </resultMap>
+
+    <resultMap id="nowMap" type="NowWeather">
+        <result column="id" property="id"/>
+        <result column="degree" property="degree"/>
+        <result column="weather" property="weather"/>
+        <result column="weather_code" property="weatherCode"/>
+        <result column="humidity" property="humidity"/>
+        <result column="wind_direction" property="windDirection"/>
+        <result column="wind_power" property="windPower"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="location_id" property="locationId"/>
+    </resultMap>
+
+    <resultMap id="dayMap" type="DayWeather">
+        <result column="day_weather" property="dayWeather"/>
+        <result column="day_weather_code" property="dayWeatherCode"/>
+        <result column="day_wind_direction" property="dayWindDirection"/>
+        <result column="day_wind_power" property="dayWindPower"/>
+        <result column="night_weather" property="nightWeather"/>
+        <result column="night_weather_code" property="nightWeatherCode"/>
+        <result column="night_wind_direction" property="nightWindDirection"/>
+        <result column="night_wind_power" property="nightWindPower"/>
+        <result column="degree_max" property="degreeMax"/>
+        <result column="degree_min" property="degreeMin"/>
+        <result column="time" property="time"/>
+        <result column="date_id" property="dateId"/>
+        <result column="location_id" property="locationId"/>
+    </resultMap>
+
+    <!--查询实时气象-->
+    <select id="findNow" resultMap="nowMap">
+        select * from tb_now_weather where location_id = #{locationId}
+    </select>
+
+    <!--保存实时气象-->
+    <insert id="saveNow">
+        insert into tb_now_weather
+        (
+        degree,
+        weather,
+        weather_code,
+        humidity,
+        wind_direction,
+        wind_power,
+        update_time,
+        location_id
+        )
+        value
+        (
+        #{degree},
+        #{weather},
+        #{weatherCode},
+        #{humidity},
+        #{windDirection},
+        #{windPower},
+        #{updateTime},
+        #{locationId}
+        )
+    </insert>
+
+    <!--更新实时气象-->
+    <update id="updateNow" parameterType="NowWeather">
+        update tb_now_weather set
+        degree=#{degree},
+        weather=#{weather},
+        weather_code=#{weatherCode},
+        humidity=#{humidity},
+        wind_direction=#{windDirection},
+        wind_power=#{windPower},
+        update_time=#{updateTime},
+        location_id=#{locationId}
+        where location_id=#{locationId}
+    </update>
+
+    <!--保存24小时预报-->
+    <insert id="saveHour"
+            parameterType="java.util.List"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        insert into tb_hour_weather
+        (
+        degree,
+        weather,
+        weather_code,
+        wind_direction,
+        wind_power,
+        time,
+        time_id,
+        location_id)
+        values
+        <foreach collection="list" item="hour" index="index" separator=",">
+            (
+            #{hour.degree},
+            #{hour.weather},
+            #{hour.weatherCode},
+            #{hour.windDirection},
+            #{hour.windPower},
+            #{hour.time},
+            #{hour.timeId},
+            #{hour.locationId}
+            )
+        </foreach>
+    </insert>
+    <!--查询24小时预报-->
+    <select id="findHour" resultMap="hourMap">
+        select * from tb_hour_weather where location_id = #{locationId}
+    </select>
+    <!--更新24小时预报-->
+    <update id="updateHour"
+            parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" separator=";">
+            update tb_hour_weather set
+            degree=${item.degree},
+            weather='${item.weather}',
+            weather_code=${item.weatherCode},
+            wind_direction='${item.windDirection}',
+            wind_power=${item.windPower},
+            time='${item.time}'
+            where
+            time_id=${item.timeId} and location_id=${item.locationId}
+        </foreach>
+    </update>
+
+    <!--保存7天预报-->
+    <insert id="saveDay"
+            parameterType="java.util.List"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        insert into tb_day_weather(
+        day_weather,
+        day_weather_code,
+        day_wind_direction,
+        day_wind_power,
+        night_weather,
+        night_weather_code,
+        night_wind_direction,
+        night_wind_power,
+        degree_max,
+        degree_min,
+        time,
+        date_id,
+        location_id)
+        values
+        <foreach collection="list" item="day" index="index" separator=",">
+            (
+            #{day.dayWeather},
+            #{day.dayWeatherCode},
+            #{day.dayWindDirection},
+            #{day.dayWindPower},
+            #{day.nightWeather},
+            #{day.nightWeatherCode},
+            #{day.nightWindDirection},
+            #{day.nightWindPower},
+            #{day.degreeMax},
+            #{day.degreeMin},
+            #{day.time},
+            #{day.dateId},
+            #{day.locationId}
+            )
+        </foreach>
+    </insert>
+    <!--查询7天预报-->
+    <select id="findDay" resultMap="dayMap">
+        select * from tb_day_weather where location_id = #{locationId}
+    </select>
+    <!--更新7天预报-->
+    <update id="updateDay" parameterType="java.util.List">
+        <foreach collection="list" item="day" index="index" separator=";">
+            update tb_day_weather set
+            day_weather=#{day.dayWeather}
+            day_weather_code=#{day.dayWeatherCode},
+            day_wind_direction=#{day.dayWindDirection},
+            day_wind_power=#{day.dayWindPower},
+            night_weather=#{day.nightWeather},
+            night_weather_code=#{day.nightWeatherCode},
+            night_wind_direction=#{day.nightWindDirection},
+            night_wind_power=#{day.nightWindPower},
+            degree_max=#{day.degreeMax},
+            degree_min=#{day.degreeMin},
+            time=#{day.time}
+            where
+            date_id=#{day.dateId} and location_id=#{day.locationId}
+        </foreach>
+    </update>
+
+
+</mapper>

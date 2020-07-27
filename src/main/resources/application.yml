@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/iotat_weather?allowMultiQueries=true&serverTimezone=GMT%2B8
+    username: root
+    password: root
+
+mybatis:
+  type-aliases-package: com.iotat.weather.pojo
+  mapper-locations: classpath:mapper/*.xml
