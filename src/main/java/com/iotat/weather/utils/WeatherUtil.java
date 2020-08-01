@@ -18,6 +18,7 @@ import java.nio.charset.StandardCharsets;
  */
 public class WeatherUtil {
 
+    //3个API可以卸载一起，用竖线隔开，缓存时间段有差异，所以分成3个接口
     private final String nowApi = "https://wis.qq.com/weather/common?source=xw&weather_type=observe";
     private final String hourApi = "https://wis.qq.com/weather/common?source=xw&weather_type=forecast_1h";
     private final String dayApi = "https://wis.qq.com/weather/common?source=xw&weather_type=forecast_24h";
@@ -42,7 +43,7 @@ public class WeatherUtil {
     }
 
     /**
-     * 拼接Date类型的字符串202007221755=》2020-07-22 17：55:00
+     * 拼接Date类型的字符串202007221755=》2020-07-22 17：55
      *
      * @param s 字符串 202007221755
      * @return date字符串：2020-07-22 17:55
@@ -82,7 +83,8 @@ public class WeatherUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return new JSONObject(JSON.parseObject(jsonString.toString()));
+        // return new JSONObject(JSON.parseObject(jsonString.toString()));
+        return JSON.parseObject(jsonString.toString());
     }
 
     /**
