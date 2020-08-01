@@ -18,19 +18,17 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public String getLocation(String name) {
 
-        if (name == null) {
-            return ResultJSON.resultStatus(200, "搜索市、区、县等");
-        }
-
-        if (name.contains(" ")) {
-            name = name.replace(" ", "");//消除所有的空格
+        // name = name.trim();//只能去掉两边的多余的空格
+        // 去掉所有空格
+        if (name.contains(" ")){
+            name = name.replace(" ","");
         }
 
         if (name.equals("")) {
-            return ResultJSON.resultStatus(200, "搜索市、区、县等");
+            return ResultJSON.resultStatus(201, "搜索市、区、县等");
         }
 
-        List<Location> list = lm.findByName(name);
+        List<Location> list = lm.findByName(name);//根据模糊查询，查出所有的城市列表
 
         if (list.isEmpty()) {
             return ResultJSON.resultStatus(201, "抱歉，未找到相关地区");
@@ -65,13 +63,16 @@ public class LocationServiceImpl implements LocationService {
         }
 
         list.add(l.getName());
+
         Collections.reverse(list);//倒序，将[成都，四川] => [四川，成都]
 
         if (list.size() == 2) {
             list.add("");
         }
 
-        city.put("city", list.toString());
+        city.put("province",list.get(0));
+        city.put("city", list.get(1));
+        city.put("county",list.get(2));
 
         return city;
     }
