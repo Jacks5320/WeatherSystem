@@ -184,7 +184,7 @@
     <update id="updateDay" parameterType="java.util.List">
         <foreach collection="list" item="day" index="index" separator=";">
             update tb_day_weather set
-            day_weather=#{day.dayWeather}
+            day_weather=#{day.dayWeather},
             day_weather_code=#{day.dayWeatherCode},
             day_wind_direction=#{day.dayWindDirection},
             day_wind_power=#{day.dayWindPower},
