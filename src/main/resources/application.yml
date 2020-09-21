@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/iotat_weather?allowMultiQueries=true&serverTimezone=GMT%2B8
+    username: root
+    password: root
+    druid:
+      # 初始化
+      initial-size: 5
+      min-idle: 5
+      max-active: 10
+      # 最大等待时间
+      max-wait: 6000
+
+mybatis:
+  type-aliases-package: com.iotat.weather.pojo
+  mapper-locations: classpath:mapper/*.xml
